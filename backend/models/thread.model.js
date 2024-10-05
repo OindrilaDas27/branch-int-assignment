@@ -5,14 +5,8 @@ const threadSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    },
-    agentId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Agent',
-    },
+    userId: String,
+    agentId: String,
     title: String,
 });
 

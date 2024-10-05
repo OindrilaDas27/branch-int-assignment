@@ -2,17 +2,12 @@ const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema({
     id: String,
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    },
+    userId: String,
     message: String,
     messageStatus: String,
-    threadId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Thread', 
-    },
-    messageFrom: String,
+    threadId: String,
+    priority: String,
+    role: String,
     createdAt: {
         type: Date,
         default: Date.now,
