@@ -5,6 +5,7 @@ const cors = require('cors');
 
 const userRouter = require('./routes/user.route');
 const messageRouter = require('./routes/message.route');
+const threadRouter = require('./routes/threads.route');
 
 connectDB();
 const app = express();
@@ -14,6 +15,7 @@ app.use(cors());
 
 app.use('/api/user', userRouter);
 app.use('/api/msg', messageRouter);
+app.use('/api/thread', threadRouter);
 
 const port = process.env.PORT || 5000;
 

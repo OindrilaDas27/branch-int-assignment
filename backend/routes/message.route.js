@@ -12,4 +12,9 @@ router.get('/get-msg', messageController.getUnresolvedMessage);
 // route to claim an issue
 router.post('/claim-issue', messageController.claimIssue);
 
+// route to thread
+router.post('/create-thread-msg', messageController.createThreadMessage);
+
+router.get('/get-thread/:threadId', messageController.getAllMessagesInThread)
+
 module.exports = router;

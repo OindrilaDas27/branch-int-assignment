@@ -2,6 +2,7 @@ const Message = require('../models/message.model');
 const User = require('../models/user.model');
 const Thread = require('../models/thread.model');
 const shortid = require('shortid');
+const { getThreads } = require('./thread.controller');
 
 const msgStatus = Object.freeze({
     active: 'active',
@@ -90,6 +91,7 @@ const claimIssue = async (req, res) => {
             title: threadName,
             userId: issue.userId,
             agentId: agentId,
+            msgId: messageId
         })
 
         issue.messageStatus = msgStatus.active;
@@ -104,6 +106,50 @@ const claimIssue = async (req, res) => {
     }
 }
 
+const getAllMessagesInThread = async (req, res) => {
+    try {
+        const threadId = req.params.threadId
 
+        const thread = await Thread.findOne({ threadId: threadId})
 
-module.exports = { createMessage, getUnresolvedMessage, claimIssue };
+        if(!thread) {
+            return res.status(404).json({ error: "Thread not found"});
+        }
+
+        const originalMsg = await Message.findById( thread.msgId );
+        console.log("original msgId:", thread.msgId);
+
+        let messagesInThread = await Message.find({ threadId: threadId })
+
+        const allMsg = [originalMsg, ...messagesInThread];
+        res.status(200).json({ 'messages': allMsg })
+        console.log("thread Id: ", threadId);
+    } catch (error) {
+        console.log(error)
+        res.status(400).json(error)
+    }
+}
+
+const createThreadMessage = async (req, res) => {
+    try {
+        const messageData = req.body;
+        const thread = await getThreads(messageData.threadId, "id");
+
+        const newMessgae = new Message({
+            userId: thread.userId,
+            message: messageData.message,
+            status: msgStatus.active,
+            threadId: messageData.threadId,
+            role: messageData.role
+        })
+
+        let message = await newMessgae.save();
+
+        res.status(200).json(message);
+    } catch (error) {
+        console.log(error);
+        res.status(400).json(error);
+    }
+}
+
+module.exports = { createMessage, getUnresolvedMessage, claimIssue, getAllMessagesInThread, createThreadMessage };

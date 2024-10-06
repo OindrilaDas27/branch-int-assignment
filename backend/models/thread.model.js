@@ -7,6 +7,7 @@ const threadSchema = new mongoose.Schema({
     },
     userId: String,
     agentId: String,
+    msgId: String,
     title: String,
 });
 
