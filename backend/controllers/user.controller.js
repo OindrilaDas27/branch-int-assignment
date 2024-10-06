@@ -26,13 +26,14 @@ const createUser = async (req, res) => {
             const newUser = new User({
                 userId: shortId.generate(),
                 emailId: userDetails.emailId,
+                userName: userDetails.userName,
                 role: userDetails.role,
                 numberOfQueries: userDetails.role=='customer' ? 0 : undefined,
             });
             const user = await newUser.save();
             res.status(200).json(user)
         } else {
-            res.status(200).json("User exists:", userByEmail);
+            return res.status(200).json({ message: "User exists", user: userByEmail });
         }
     } catch (error) {
         console.log(error);

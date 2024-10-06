@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
         unique: true,
     },
     emailId: String,
+    userName: String,
     role: String,
     numberOfQueries: Number,
 })
