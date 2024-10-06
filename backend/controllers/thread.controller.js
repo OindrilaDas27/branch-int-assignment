@@ -19,4 +19,36 @@ const getThreads = async (searchParam, type) => {
     }
 }
 
-module.exports = { getThreads };
+const getAllThreadsForUser = async(req, res) => {
+    try {
+        const userId = req.params.userId;
+        const threads = await Thread.find({ userId: userId });
+
+        if(threads.length === 0) {
+            return res.status(404).json({ error: "No threads found for this user" });
+        }
+
+        res.status(200).json({ threads });
+    } catch (error) {
+        console.log(error);
+        res.status(400).json(error);
+    }
+}
+
+const getAllThreadsForAgent = async(req, res) => {
+    try {
+        const agentId = req.params.agentId;
+        const threads = await Thread.find({ agentId: agentId });
+
+        if(threads.length === 0) {
+            return res.status(404).json({ error: "No threads found for this agent" });
+        }
+
+        res.status(200).json({ threads });
+    } catch (error) {
+        console.log(error);
+        res.status(400).json(error);
+    }
+}
+
+module.exports = { getThreads, getAllThreadsForUser, getAllThreadsForAgent };
