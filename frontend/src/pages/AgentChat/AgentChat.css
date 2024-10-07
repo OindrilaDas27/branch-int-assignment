@@ -1,0 +1,15 @@
+.chat-bubble-left {
+    background-color: #e2e2e2;
+    color: #000;
+    text-align: left;
+    border-top-left-radius: 0;
+    margin-right: auto; 
+}
+
+.chat-bubble-right {
+    background-color: rgb(127, 229, 255);
+    color: black;
+    text-align: left;
+    border-top-right-radius: 0;
+    margin-left: auto; 
+}

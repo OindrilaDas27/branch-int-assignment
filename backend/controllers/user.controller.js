@@ -15,6 +15,22 @@ const findUser = async (searchParam, type) => {
     }
 }
 
+const findUserByEmail = async (req, res) => {
+    try {
+        const { emailId } = req.query;
+        const user = await User.findOne({ emailId });
+
+        if (user) {
+            return res.status(200).json({ exists: true, userId: user.userId });
+        } else {
+            return res.status(200).json({ exists: false });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ error: 'Error fetching user' });
+    }
+}
+
 const createUser = async (req, res) => {
     try {
         console.log(req.body);
@@ -41,4 +57,4 @@ const createUser = async (req, res) => {
     } 
 }
 
-module.exports = { findUser, createUser };
+module.exports = { findUser, createUser, findUserByEmail };

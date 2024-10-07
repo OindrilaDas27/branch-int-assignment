@@ -32,7 +32,7 @@ const createMessage = async (req, res) => {
         }
 
         const newMessgae = new Message({
-            id: shortid.generate(),
+            id: messageData.msgId,
             userId: messageData.userId,
             message: messageData.message,
             messageStatus: user.role === 'customer' ? msgStatus.unresolved : msgStatus.active,
@@ -74,7 +74,7 @@ const claimIssue = async (req, res) => {
             return res.status(404).json("Issue not found");
         }
 
-        if(issue.status === msgStatus.active) {
+        if(issue.messageStatus === msgStatus.active) {
             return res.status(400).json("Issue already claimed");
         }
 
@@ -100,7 +100,7 @@ const claimIssue = async (req, res) => {
         await newThread.save();
         await issue.save();
 
-        res.status(200).json({ "threadId": newThread.threadId});
+        res.status(200).json({ "threadId and msgId": newThread.threadId, messageId});
     } catch (error) {
         console.log(error);
     }
@@ -152,4 +152,41 @@ const createThreadMessage = async (req, res) => {
     }
 }
 
-module.exports = { createMessage, getUnresolvedMessage, claimIssue, getAllMessagesInThread, createThreadMessage };
+const getMessagesByUserId = async (req, res) => {
+    try {
+        const { userId } = req.params;  
+
+        const messages = await Message.find({ userId: userId });
+
+        // Check if any messages were found
+        if (!messages || messages.length === 0) {
+            return res.status(404).json({ message: "No messages found for this user." });
+        }
+
+        res.status(200).json({ messages });
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ error: "An error occurred while fetching messages." });
+    }
+};
+
+const getMessagesByMsgId = async (req, res) => {
+    try {
+        const { msgId } = req.params;  
+
+        const messages = await Message.find({ id: msgId });
+
+        // Check if any messages were found
+        if (!messages || messages.length === 0) {
+            return res.status(404).json({ message: "No messages found." });
+        }
+
+        res.status(200).json({ messages });
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ error: "An error occurred while fetching messages." });
+    }
+};
+
+
+module.exports = { createMessage, getUnresolvedMessage, claimIssue, getAllMessagesInThread, createThreadMessage, getMessagesByUserId, getMessagesByMsgId };

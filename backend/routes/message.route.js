@@ -15,6 +15,10 @@ router.post('/claim-issue', messageController.claimIssue);
 // route to thread
 router.post('/create-thread-msg', messageController.createThreadMessage);
 
-router.get('/get-thread/:threadId', messageController.getAllMessagesInThread)
+router.get('/get-thread/:threadId', messageController.getAllMessagesInThread);
+
+router.get('/get-msg/:userId', messageController.getMessagesByUserId);
+
+router.get('/get-issue/:msgId', messageController.getMessagesByMsgId);
 
 module.exports = router;

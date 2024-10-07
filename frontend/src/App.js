@@ -6,6 +6,8 @@ import CreateIssue from './pages/CreateIssue/CreateIssue';
 import Chats from './pages/Chats/Chats';
 import AgentLogin from './pages/AgentLogin/AgentLogin';
 import AgentPortal from './pages/AgentPortal/AgentPortal';
+import AgentChat from './pages/AgentChat/AgentChat';
+import Waiting from './components/Waiting/Waiting';
 
 function App() {
   return (
@@ -15,8 +17,10 @@ function App() {
         <Route path='/signup' element={<UserSignup />} />
         <Route path='/login' element={<UserLogin /> } />
         <Route path='/' element={<CreateIssue />} />
-        <Route path='/chats' element={<Chats />} />
+        <Route path='/chats' element={<Waiting />} />
+        <Route path='/chats/:threadId' element={<Chats />} />
         <Route path='/agent-portal' element={<AgentPortal />} />
+        <Route path='/agent-chat/:threadId' element={<AgentChat />} />
       </Routes>
     </BrowserRouter>
   );
