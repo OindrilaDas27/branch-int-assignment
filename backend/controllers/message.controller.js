@@ -25,14 +25,13 @@ const setPriority = (message) => {
 const createMessage = async (req, res) => {
     try {
         const messageData = req.body;
-        const user = await User.findOne({ userId: messageData.userId });
+        const user = await User.findById(messageData.userId);
 
         if(!user) {
             return res.status(404).json({message: "User not found"});
         }
 
-        const newMessgae = new Message({
-            id: messageData.msgId,
+        const newMessage = new Message({
             userId: messageData.userId,
             message: messageData.message,
             messageStatus: user.role === 'customer' ? msgStatus.unresolved : msgStatus.active,
@@ -41,10 +40,14 @@ const createMessage = async (req, res) => {
             createdAt: messageData.createdAt ? new Date(messageData.createdAt) : undefined,
         });
 
-        setPriority(newMessgae);
+        setPriority(newMessage);
 
-        await newMessgae.save();
-        res.status(200).json ({ message: "Message posted successfully"});
+        user.numberOfQueries += 1;
+        console.log(user.numberOfQueries)
+        await user.save();
+
+        const message = await newMessage.save();
+        res.status(200).json ({ message: "Message posted successfully", messageId: message._id});
     } catch (error) {
         console.log(error);
         res.status(400).json(error);
@@ -63,9 +66,10 @@ const getUnresolvedMessage = async (req, res) => {
 
 const claimIssue = async (req, res) => {
     try {
-        const agentId = req.body.userId;
-        const messageId = req.body._id;
+        const agentId = req.body.agentId;
+        const messageId = req.body.messageId;
         const threadName = req.body.threadName;
+        console.log(req.body)
 
         let issue = await Message.findById(messageId);
 
@@ -78,7 +82,7 @@ const claimIssue = async (req, res) => {
             return res.status(400).json("Issue already claimed");
         }
 
-        let agent = await User.findOne({ userId: agentId, role: "agent"});
+        let agent = await User.findOne({ _id: agentId, role: "agent"});
 
         if(!agent) {
             console.log("error from agent ad agenid")
@@ -87,7 +91,6 @@ const claimIssue = async (req, res) => {
 
         // creating a new thread
         let newThread = await Thread.create({
-            threadId: shortid.generate(),
             title: threadName,
             userId: issue.userId,
             agentId: agentId,
@@ -100,7 +103,7 @@ const claimIssue = async (req, res) => {
         await newThread.save();
         await issue.save();
 
-        res.status(200).json({ "threadId and msgId": newThread.threadId, messageId});
+        res.status(200).json({ "threadId": newThread._id,  "messageId": messageId });
     } catch (error) {
         console.log(error);
     }
@@ -110,19 +113,19 @@ const getAllMessagesInThread = async (req, res) => {
     try {
         const threadId = req.params.threadId
 
-        const thread = await Thread.findOne({ threadId: threadId})
+        const thread = await Thread.findById(threadId)
 
         if(!thread) {
             return res.status(404).json({ error: "Thread not found"});
         }
 
-        const originalMsg = await Message.findById( thread.msgId );
-        console.log("original msgId:", thread.msgId);
+        // const originalMsg = await Message.findById( thread.msgId );
+        // console.log("original msgId:", thread.msgId);
 
         let messagesInThread = await Message.find({ threadId: threadId })
 
-        const allMsg = [originalMsg, ...messagesInThread];
-        res.status(200).json({ 'messages': allMsg })
+        // const allMsg = [messagesInThread];
+        res.status(200).json({ 'messages': messagesInThread })
         console.log("thread Id: ", threadId);
     } catch (error) {
         console.log(error)
@@ -135,7 +138,7 @@ const createThreadMessage = async (req, res) => {
         const messageData = req.body;
         const thread = await getThreads(messageData.threadId, "id");
 
-        const newMessgae = new Message({
+        const newMessage = new Message({
             userId: thread.userId,
             message: messageData.message,
             status: msgStatus.active,
@@ -143,7 +146,7 @@ const createThreadMessage = async (req, res) => {
             role: messageData.role
         })
 
-        let message = await newMessgae.save();
+        let message = await newMessage.save();
 
         res.status(200).json(message);
     } catch (error) {
@@ -174,14 +177,14 @@ const getMessagesByMsgId = async (req, res) => {
     try {
         const { msgId } = req.params;  
 
-        const messages = await Message.find({ id: msgId });
+        const message = await Message.findById(msgId);
 
         // Check if any messages were found
-        if (!messages || messages.length === 0) {
+        if (!message) {
             return res.status(404).json({ message: "No messages found." });
         }
 
-        res.status(200).json({ messages });
+        res.status(200).json({ message });
     } catch (error) {
         console.log(error);
         res.status(400).json({ error: "An error occurred while fetching messages." });

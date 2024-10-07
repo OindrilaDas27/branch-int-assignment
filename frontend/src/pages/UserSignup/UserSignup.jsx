@@ -13,7 +13,6 @@ const UserSignup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    console.log('here is error');
 
     try {
       const response = await axios.post(CREATE_USER_ENDPOINT, {
@@ -22,9 +21,10 @@ const UserSignup = () => {
         role: role
       });
 
-      const {userId} = response.data;
+      const userId = response.data._id;
+      console.log(response.data)
       setMessage(`Signup Successful: ${JSON.stringify(response.data)}`);
-
+      console.log(userId)
       navigate('/', { state: { userId, role } });
     } catch (error) {
       console.log('Error in signup: ', error);

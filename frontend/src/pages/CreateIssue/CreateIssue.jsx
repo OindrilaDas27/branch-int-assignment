@@ -2,7 +2,6 @@ import axios from 'axios';
 import React, { useState } from 'react'
 import { CREATE_ISSUE_ENDPOINT } from '../../utils/endpoints';
 import { useLocation, useNavigate } from 'react-router-dom';
-import shortid from 'shortid';
 
 const CreateIssue = () => {
     const location = useLocation();
@@ -13,17 +12,15 @@ const CreateIssue = () => {
     const handleSendMessage = async (e) => {
         e.preventDefault();
 
-        const msgId = shortid.generate();
-
         try {
             const response = await axios.post(CREATE_ISSUE_ENDPOINT, {
                 message,
                 userId,
                 role,
-                msgId
             });
-            console.log(userId, role, msgId);
-            navigate('/chats', { state: { userId, role, msgId } })
+            console.log(response.data)
+            console.log(userId, role, response.data.messageId);
+            navigate('/chats', { state: { userId, role} })
             setMessage('');
         } catch (error) {
             console.log(error);

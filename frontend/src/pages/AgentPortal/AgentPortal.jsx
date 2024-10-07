@@ -13,7 +13,7 @@ const AgentPortal = () => {
     const [threadTitle, setThreadTitle] = useState("");
     const { state } = useLocation();
     const navigate = useNavigate();
-    const { userId, role } = state; 
+    const { userId, role } = state;
 
     useEffect(() => {
         const fetchIssues = async () => {
@@ -29,7 +29,7 @@ const AgentPortal = () => {
         const fetchThreads = async () => {
             try {
                 const threadData = await axios.get(GET_THREADS_BY_AGENTID_ENDPOINT(userId));
-                const fetchedThreads = threadData.data.threads || []; 
+                const fetchedThreads = threadData.data.threads || [];
                 setThreads(fetchedThreads);
             } catch (error) {
                 console.log('Error in fetching threads: ', error);
@@ -43,28 +43,26 @@ const AgentPortal = () => {
     const claimIssue = async () => {
         try {
             const response = await axios.post(CLAIM_ISSUE_ENDPOINT, {
-                userId,
-                _id: selectedIssue._id,
+                agentId: userId,
+                messageId: selectedIssue._id,
                 threadName: threadTitle,
             });
-    
+
             console.log('Response from claimIssue API: ', response.data);
-    
+
             setShowPopup(false);
             setThreadTitle("");
             setSelectedIssue(null);
-    
-            const threadIdMsg = response.data['threadId and msgId']; 
-            if (threadIdMsg) {
-                const threadId = threadIdMsg.split(' ')[0];
-                const msgId = response.data.messageId;
-    
+
+            const threadData = response.data;
+            if (threadData) {
+                const threadId = threadData.threadId;
+                const msgId = threadData.messageId;
+
                 console.log('Extracted threadId: ', threadId);
                 console.log('Extracted msgId: ', msgId);
-    
-                if (threadId) {
-                    navigate(`/agent-chat/${threadId}`, { state: { threadId, userId, threadTitle } });
-                }
+
+                navigate(`/agent-chat/${threadId}`, { state: { threadId, userId, threadTitle } });
             } else {
                 console.error('threadId is missing in the response');
             }
@@ -72,8 +70,8 @@ const AgentPortal = () => {
             console.log('Error claiming issue: ', error);
         }
     };
-    
-    
+
+
 
     const handleClaimClick = (issue) => {
         setSelectedIssue(issue);

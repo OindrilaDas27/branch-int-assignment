@@ -4,21 +4,21 @@ const router = express.Router();
 const messageController = require('../controllers/message.controller');
 
 // route to create msg
-router.post('/create-msg', messageController.createMessage);
+router.post('/', messageController.createMessage);
 
 // route to get all unresponded msg
-router.get('/get-msg', messageController.getUnresolvedMessage);
+router.get('/', messageController.getUnresolvedMessage);
 
 // route to claim an issue
-router.post('/claim-issue', messageController.claimIssue);
+router.post('/claim', messageController.claimIssue);
 
 // route to thread
-router.post('/create-thread-msg', messageController.createThreadMessage);
+router.post('/thread', messageController.createThreadMessage);
 
-router.get('/get-thread/:threadId', messageController.getAllMessagesInThread);
+router.get('/thread/:threadId', messageController.getAllMessagesInThread);
 
-router.get('/get-msg/:userId', messageController.getMessagesByUserId);
+router.get('/user/:userId', messageController.getMessagesByUserId);
 
-router.get('/get-issue/:msgId', messageController.getMessagesByMsgId);
+router.get('/issue/:msgId', messageController.getMessagesByMsgId);
 
 module.exports = router;

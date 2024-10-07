@@ -15,14 +15,13 @@ const AgentLogin = () => {
         e.preventDefault();
 
         try {
-            const checkAgentIsPresent = await axios.get(GET_USER_BY_EMAIL_ENDPOINT, {
-                params: { emailId }
-            });
+            const checkAgentIsPresent = await axios.get(GET_USER_BY_EMAIL_ENDPOINT(emailId));
 
             if (checkAgentIsPresent.data.exists) {
-                const { userId } = checkAgentIsPresent.data;
+                const userId = checkAgentIsPresent.data.userId;
 
                 setMessage(`Login Successful: Welcome back, ${userName}`);
+                console.log(checkAgentIsPresent.data)
                 navigate('/agent-portal', { state: { userId, role } });
             } else {
                 const response = await axios.post(CREATE_USER_ENDPOINT, {
@@ -31,9 +30,10 @@ const AgentLogin = () => {
                     role: role
                 });
 
-                const { userId } = response.data;
+                const userId = response.data.userId;
                 setMessage(`Login Successful: ${JSON.stringify(response.data)}`);
 
+                console.log(response.data)
                 navigate('/agent-portal', { state: { userId, role } });
             }
         } catch (error) {

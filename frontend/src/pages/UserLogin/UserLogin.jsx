@@ -15,13 +15,12 @@ const UserLogin = () => {
         console.log('here is error');
 
         try {
-            const checkAgentIsPresent = await axios.get(GET_USER_BY_EMAIL_ENDPOINT, {
-                params: { emailId }
-            });
+            const checkAgentIsPresent = await axios.get(GET_USER_BY_EMAIL_ENDPOINT(emailId));
 
             if (checkAgentIsPresent.data.exists) {
-                const { userId } = checkAgentIsPresent.data;
-
+                const userId = checkAgentIsPresent.data.userId;
+                console.log(checkAgentIsPresent.data);
+                console.log(userId)
                 setMessage(`Login Successful: Welcome back`);
                 navigate('/', { state: { userId, role } });
             } else {

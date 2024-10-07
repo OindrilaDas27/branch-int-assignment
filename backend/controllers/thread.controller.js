@@ -5,13 +5,11 @@ const getThreads = async (searchParam, type) => {
         if (type === "user") {
             const threads = await Thread.find({ userId: searchParam });
             return threads;
-        } 
-        if (type === "agent") {
+        } else if (type === "agent") {
             const threads = await Thread.find({ agentId: searchParam });
             return threads;
-        }
-        if (type === "id") {
-            const threads = await Thread.find({ threadId: searchParam });
+        } else if (type === "id") {
+            const threads = await Thread.findById(searchParam);
             return threads;
         }
     } catch (error) {
