@@ -57,7 +57,7 @@ npm install
 npm start
 ```
 
-The backend should now be running on **localhost:8080**.
+The backend should now be running on **localhost:5000**.
 
 ---
 
