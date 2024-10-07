@@ -21,7 +21,7 @@ const UserSignup = () => {
         role: role
       });
 
-      const userId = response.data._id;
+      const userId = response.data.user._id;
       console.log(response.data)
       setMessage(`Signup Successful: ${JSON.stringify(response.data)}`);
       console.log(userId)

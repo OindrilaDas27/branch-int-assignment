@@ -30,7 +30,7 @@ const AgentLogin = () => {
                     role: role
                 });
 
-                const userId = response.data.userId;
+                const userId = response.data.user._id;
                 setMessage(`Login Successful: ${JSON.stringify(response.data)}`);
 
                 console.log(response.data)

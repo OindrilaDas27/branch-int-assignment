@@ -52,7 +52,7 @@ const AgentChat = () => {
             setSelectedThreadId(threadId);
 
             // Fetch and set the title for the selected thread if not already available
-            const thread = threads.find(thread => thread._id === threadId || thread.threadId === threadId);
+            const thread = threads.find(thread => thread._id === threadId);
             console.log('Thread: ', thread);
             if (thread) {
                 setSelectedThreadTitle(thread.title);

@@ -46,27 +46,24 @@ const getUser = async(req, res) => {
 
 const createUser = async (req, res) => {
     try {
-        console.log(req.body);
         const userDetails = req.body;
-
-        const userById = await findUser(userDetails.userId, "userId");
-        const userByEmail = await findUser(userDetails.emailId, "emailId");
-        if(!userByEmail && !userById) {
+        let user = await findUser(userDetails.emailId, "emailId");
+        if(!user) {
             const newUser = new User({
                 emailId: userDetails.emailId,
                 userName: userDetails.userName,
                 role: userDetails.role,
                 numberOfQueries: userDetails.role=='customer' ? 0 : undefined,
             });
-            const user = await newUser.save();
-            res.status(200).json(user)
+            const new_user = await newUser.save();
+            res.status(200).json({ message: "New user login", user: new_user })
         } else {
-            return res.status(200).json({ message: "User exists", user: userByEmail });
+            return res.status(200).json({ message: "User exists", user });
         }
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Server error"});
-    } 
+    }
 }
 
 module.exports = { findUser, createUser, findUserByEmail, getUser };
